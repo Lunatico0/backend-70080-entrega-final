@@ -4,17 +4,19 @@ socket.on('connect', () => {
   console.log('Conectado al servidor');
 });
 
-socket.on('products', async (data) => {
-  console.log('Productos recibidos:', await data);
-  renderProductos(await data);
-});
+
 
 socket.on('disconnect', () => {
   console.log('Desconectado del servidor');
 });
 
-// Función que modifica el DOM para agregar los productos
+socket.on('products', (products) => {
+  console.log('Products received from server:', products);
+  renderProductos(products);
+});
+
 function renderProductos(productos) {
+  console.log('Rendering products:', productos);
   const productsContainer = document.getElementById('productsContainer');
   if (!productsContainer) {
     console.error("No se encontró el contenedor de productos");
@@ -24,24 +26,26 @@ function renderProductos(productos) {
   productsContainer.innerHTML = '';
 
   productos.forEach((producto) => {
+    console.log('Rendering product:', producto);
     const card = document.createElement('div');
     card.classList.add('flex', 'flex-col', 'justify-between', 'bg-slate-600', 'rounded', 'w-60', 'min-h-32', 'h-[400px]', 'p-1');
     card.innerHTML = `
       <div class="flex flex-col justify-center text-white">
-        <img src="${producto.thumbnails}" alt="${producto.title}" class="w-full h-auto object-cover">
-        <h3 class="text-xl itemDescripcion">${producto.title}</h3>
-        <h3 class="text-sm">${producto.description}</h3>
-        <p>$${producto.price}</p>
-        </div>
-        <div class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-3 text-center rounded text-white">
-          <button>Eliminar</button>
-        </div>
+      <img src="${producto.thumbnails[0]}" alt="${producto.title}" class="w-full h-auto object-cover">
+      <h3 class="text-xl itemDescripcion">${producto.title}</h3>
+      <h3 class="text-sm">${producto.description}</h3>
+      <p>$${producto.price}</p>
+      </div>
+      <div class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-3 text-center rounded text-white">
+      <button>Eliminar</button>
+      </div>
     `;
 
     productsContainer.appendChild(card);
 
     // Agregamos un listener para eliminar el producto
     card.querySelector('button').addEventListener('click', () => {
+      console.log('Deleting product with id:', producto.id);
       deleteProduct(producto.id);
     });
   });

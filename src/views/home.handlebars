@@ -1,17 +1,74 @@
 <h1 class="my-8 text-white text-4xl font-bold">Productos</h1>
 
+<form action="?" class="mb-4">
+  <label for="cant" class="text-white">Cantidad de productos mostrados</label>
+  <select name="limit" id="cant">
+    <option value="5" {{#ifCond limit '==' 5}}selected{{/ifCond}}>5</option>
+    <option value="10" {{#ifCond limit '==' 10}}selected{{/ifCond}}>10</option>
+    <option value="15" {{#ifCond limit '==' 15}}selected{{/ifCond}}>15</option>
+    <option value="30" {{#ifCond limit '==' 30}}selected{{/ifCond}}>30</option>
+    <option value="50" {{#ifCond limit '==' 50}}selected{{/ifCond}}>50</option>
+    <option value="75" {{#ifCond limit '==' 75}}selected{{/ifCond}}>75</option>
+    <option value="100" {{#ifCond limit '==' 100}}selected{{/ifCond}}>100</option>
+    <option value="200" {{#ifCond limit '==' 200}}selected{{/ifCond}}>200</option>
+  </select>
+  <input type="submit"
+    class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 px-2 rounded text-white"
+    value="Enviar" />
+</form>
+
+
 <div class="flex justify-center items-center gap-2 flex-wrap">
   {{#each products}}
   <div class="flex flex-col justify-between bg-slate-600 rounded w-60 min-h-32 h-[400px] p-1">
-    <div class="'flex', 'flex-col', 'justify-between', 'bg-slate-600', 'rounded', 'w-60', 'min-h-32', 'h-[400px]', 'p-1'">
-      <img src="{{this.thumbnails}}" alt="{{this.title}}" class="w-full h-auto object-cover">
-      <h2 class="text-xl text-white itemDescripcion"> {{this.title}} </h2>
-      <h3 class="text-sm text-white"> {{this.description}} </h3>
+    <div class="flex flex-col object-fill">
+      <img src="{{modifyImageUrl this.thumbnails.[0] '240' '240'}}" class="w-full h-auto rounded-sm object-cover">
+    </div>
+    <div class="text-white flex flex-col gap-2">
+      <h2 class="text-xl text-white leading-6 itemDescripcion"> {{this.title}} </h2>
+      <h3 class="text-sm text-white leading-4">
+        {{#each description}}
+          {{#ifCond this.label '==' "MEDIDAS"}}
+            {{this.label}}: {{this.value}}
+          {{/ifCond}}
+        {{/each}}
+      </h3>
       <p class="text-white"> ${{this.price}} </p>
     </div>
-    <button class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-3 rounded text-white" id="{{this.id}}">Agregar</button>
+    <button
+      class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 rounded text-white"
+      id="{{this.id}}">Agregar</button>
   </div>
   {{/each}}
+</div>
+<div class="flex flex-row gap-4 pt-4">
+  {{#if hasPrevPage}}
+  <a class="
+      bg-slate-400/90 
+      border-slate-400 border 
+      hover:bg-slate-500 
+      active:bg-slate-300
+      active:text-black 
+      text-white
+      mt-2 px-2 py-1 
+      rounded" href="/products?page={{prevPage}}&limit={{limit}}">
+    Página Anterior
+  </a>
+  {{/if}}
+
+  {{#if hasNextPage}}
+  <a class="
+      bg-slate-400/90 
+      border-slate-400 border 
+      hover:bg-slate-500 
+      active:bg-slate-300
+      active:text-black 
+      text-white
+      mt-2 px-2 py-1 
+      rounded" href="/products?page={{nextPage}}&limit={{limit}}">
+    Página Siguiente
+  </a>
+  {{/if}}
 </div>
 
 <style>

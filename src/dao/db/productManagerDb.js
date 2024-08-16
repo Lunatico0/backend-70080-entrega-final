@@ -37,14 +37,19 @@ class ProductManager {
     }
   };
 
-  async getProducts() {
+  async getProducts(page, limit) {
     try {
-      const products = await ProductModel.find();
-      return products;
+      const productsList = await ProductModel.paginate({}, { limit, page });
+      const prodRender = productsList.docs.map(prod => {
+        const { _id, ...data } = prod.toObject();
+        return data;
+      });
+      
+      return {prodRender, productsList};
     } catch (error) {
       console.log("Error al obtener productos:", error);
     }
-  };
+  }
 
   async updateProduct(id, data) {
     try {
