@@ -4,10 +4,27 @@ const manager = new ProductManager();
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const limit = req.query.limit
+  const limit = req.query.limit;
+  const page = req.query.page;
+  const querySort = req.query.sort
+  let sort = {}; 
+
+  switch (querySort) {
+    case "asc":
+      sort = { price: 1 }; 
+      break;
+  
+    case "desc":
+      sort = { price: -1 }; 
+      break;
+  
+    default:
+      break;
+  }
+
   try {
-    const products = await manager.getProducts();
-    limit ? res.send(products.slice(0, limit)) : res.send(products);
+    const products = await manager.getProducts(page, limit, sort);
+    res.send(products.productsList.docs);
   } catch (error) {
     console.log(error)
   }

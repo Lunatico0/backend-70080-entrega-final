@@ -1,8 +1,8 @@
 <h1 class="my-8 text-white text-4xl font-bold">Productos</h1>
 
-<form action="?" class="mb-4">
+<form id="limitForm" action="?" class="mb-4">
   <label for="cant" class="text-white">Cantidad de productos mostrados</label>
-  <select name="limit" id="cant">
+  <select name="limit" id="cant" class="bg-slate-300 border border-slate-400 rounded px-2 py-1">
     <option value="5" {{#ifCond limit '==' 5}}selected{{/ifCond}}>5</option>
     <option value="10" {{#ifCond limit '==' 10}}selected{{/ifCond}}>10</option>
     <option value="15" {{#ifCond limit '==' 15}}selected{{/ifCond}}>15</option>
@@ -12,11 +12,7 @@
     <option value="100" {{#ifCond limit '==' 100}}selected{{/ifCond}}>100</option>
     <option value="200" {{#ifCond limit '==' 200}}selected{{/ifCond}}>200</option>
   </select>
-  <input type="submit"
-    class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 px-2 rounded text-white"
-    value="Enviar" />
 </form>
-
 
 <div class="flex justify-center items-center gap-2 flex-wrap">
   {{#each products}}
@@ -28,12 +24,12 @@
       <h2 class="text-xl text-white leading-6 itemDescripcion"> {{this.title}} </h2>
       <h3 class="text-sm text-white leading-4">
         {{#each description}}
-          {{#ifCond this.label '==' "MEDIDAS"}}
-            {{this.label}}: {{this.value}}
-          {{/ifCond}}
+        {{#ifCond this.label '==' "MEDIDAS"}}
+        {{this.label}}: {{this.value}}
+        {{/ifCond}}
         {{/each}}
       </h3>
-      <p class="text-white"> ${{this.price}} </p>
+      <p class="text-white"> ${{formatNumber price 2}} </p>
     </div>
     <button
       class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 rounded text-white"
@@ -41,35 +37,78 @@
   </div>
   {{/each}}
 </div>
-<div class="flex flex-row gap-4 pt-4">
-  {{#if hasPrevPage}}
-  <a class="
-      bg-slate-400/90 
-      border-slate-400 border 
-      hover:bg-slate-500 
-      active:bg-slate-300
-      active:text-black 
-      text-white
-      mt-2 px-2 py-1 
-      rounded" href="/products?page={{prevPage}}&limit={{limit}}">
+
+<div class="flex flex-row gap-4 pt-4 botones">
+  <a id="prevPageLink" class="
+    {{#if hasPrevPage}}
+    bg-slate-400/90 
+    border-slate-400 border 
+    hover:bg-slate-500 
+    active:bg-slate-300
+    active:text-black 
+    text-white
+    mt-2 px-2 py-1 
+    rounded
+    {{else}}
+    buttons
+    bg-slate-400/90 
+    border-slate-400 border 
+    hover:bg-slate-500 
+    active:bg-slate-300
+    active:text-black 
+    text-white
+    mt-2 px-2 py-1 
+    rounded
+    cursor-not-allowed
+    opacity-50
+    {{/if}}" href="{{#if hasPrevPage}}/products?page={{prevPage}}&limit={{limit}}{{else}}#{{/if}}">
     Página Anterior
   </a>
-  {{/if}}
 
-  {{#if hasNextPage}}
-  <a class="
-      bg-slate-400/90 
-      border-slate-400 border 
-      hover:bg-slate-500 
-      active:bg-slate-300
-      active:text-black 
-      text-white
-      mt-2 px-2 py-1 
-      rounded" href="/products?page={{nextPage}}&limit={{limit}}">
+  <a id="nextPageLink" class="
+    {{#if hasNextPage}}
+    bg-slate-400/90
+    border-slate-400 border 
+    hover:bg-slate-500 
+    active:bg-slate-300
+    active:text-black 
+    text-white
+    mt-2 px-2 py-1 
+    rounded
+    {{else}}
+    buttons
+    bg-slate-400/90 
+    border-slate-400 border 
+    hover:bg-slate-500 
+    active:bg-slate-300
+    active:text-black 
+    text-white
+    mt-2 px-2 py-1 
+    rounded
+    cursor-not-allowed
+    opacity-50
+    {{/if}}" href="{{#if hasNextPage}}/products?page={{nextPage}}&limit={{limit}}{{else}}#{{/if}}">
     Página Siguiente
   </a>
-  {{/if}}
 </div>
+
+<script>
+  document.getElementById('cant').addEventListener('change', function () {
+    document.getElementById('limitForm').submit();
+  });
+  
+  document.getElementById('prevPageLink').addEventListener('click', function (event) {
+    if (this.classList.contains('cursor-not-allowed')) {
+      event.preventDefault();
+    }
+  });
+  
+  document.getElementById('nextPageLink').addEventListener('click', function (event) {
+    if (this.classList.contains('cursor-not-allowed')) {
+      event.preventDefault();
+    }
+  });
+</script>
 
 <style>
   .itemDescripcion {
@@ -79,5 +118,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
+  }
+
+  .buttons {
+    pointer-events: none;
+    cursor: not-allowed;
   }
 </style>

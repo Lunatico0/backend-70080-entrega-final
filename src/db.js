@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
+import { config } from 'dotenv';
+config();
 
-mongoose.connect('mongodb+srv://pittanapatricio:Pittana1.@cluster0.3e9pt.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0')
+const TOKEN = process.env.URI;
+
+mongoose.connect(TOKEN)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Error connecting to MongoDB', err));

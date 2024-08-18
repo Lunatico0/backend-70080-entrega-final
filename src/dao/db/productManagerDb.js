@@ -3,7 +3,6 @@ import ProductModel from '../models/product.model.js';
 class ProductManager {
   async addProduct({ title, description, price, code, stock, category, thumbnails }) {
     try {
-      // Verifica que todos los campos obligatorios no sean undefined, null, una cadena vacía, o en el caso de description y category, que estén en el formato correcto
       if (!title || !Array.isArray(description) || description.length === 0 || !price || !code || !category || !stock) {
         console.log("Todos los campos son obligatorios");
         return "Todos los campos son obligatorios";
@@ -37,9 +36,11 @@ class ProductManager {
     }
   };
 
-  async getProducts(page, limit) {
+  async getProducts(page, limit, sort) {
+    page ? page : 1;
+    limit ? limit : 0;
     try {
-      const productsList = await ProductModel.paginate({}, { limit, page });
+      const productsList = await ProductModel.paginate({}, { limit, page, sort });
       const prodRender = productsList.docs.map(prod => {
         const { _id, ...data } = prod.toObject();
         return data;

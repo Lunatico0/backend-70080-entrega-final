@@ -4,9 +4,25 @@ const manager = new ProductManager();
 const router = Router();
 
 router.get('/products', async (req, res) => {
-  let page = req.query.page || 1;
-  let limit = req.query.limit || 15;
-  const { prodRender, productsList } = await manager.getProducts(page, limit);
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 15;
+  const querySort = req.query.sort
+  let sort = {}; 
+
+  switch (querySort) {
+    case "asc":
+      sort = { price: 1 }; 
+      break;
+  
+    case "desc":
+      sort = { price: -1 }; 
+      break;
+  
+    default:
+      break;
+  }
+
+  const { prodRender, productsList } = await manager.getProducts(page, limit, sort);
 
   res.render('home', {
     products: prodRender,
@@ -21,9 +37,25 @@ router.get('/products', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  let page = req.query.page || 1;
-  let limit = req.query.limit || 15;
-  const { prodRender, productsList } = await manager.getProducts(page, limit);
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 15;
+  const querySort = req.query.sort
+  let sort = {}; 
+
+  switch (querySort) {
+    case "asc":
+      sort = { price: 1 }; 
+      break;
+  
+    case "desc":
+      sort = { price: -1 }; 
+      break;
+  
+    default:
+      break;
+  }
+
+  const { prodRender, productsList } = await manager.getProducts(page, limit, sort);
 
   res.render('home', {
     products: prodRender,
@@ -38,8 +70,39 @@ router.get('/', async (req, res) => {
 });
 
 router.get("/realTimeProducts", async (req, res) => {
-  const products = await manager.getProducts();
-  res.render("realTimeProducts", { products });
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 15;
+  const querySort = req.query.sort;
+  let sort = {}; 
+
+  switch (querySort) {
+    case "asc":
+      sort = { price: 1 }; 
+      break;
+  
+    case "desc":
+      sort = { price: -1 }; 
+      break;
+  
+    default:
+      break;
+  }
+
+  const { prodRender, productsList } = await manager.getProducts(page, limit, sort);
+
+  res.render("realTimeProducts", {
+    products: {
+      prodRender,
+      productsList
+    },
+    hasPrevPage: productsList.hasPrevPage,
+    hasNextPage: productsList.hasNextPage,
+    prevPage: productsList.prevPage,
+    nextPage: productsList.nextPage,
+    currentPage: productsList.page,
+    totalPages: productsList.totalPages,
+    limit: limit
+  });
 });
 
 export default router;

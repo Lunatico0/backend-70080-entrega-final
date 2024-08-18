@@ -3,8 +3,11 @@ import { engine } from "express-handlebars";
 import productsRouter from "./routes/products.routes.js";
 import cartRouter from "./routes/cart.routes.js";
 import viewsRouter from "./routes/views.routes.js";
+import ProductManager from './dao/db/productManagerDb.js'
 import { Server } from "socket.io";
 import "./db.js"
+
+const productManager = new ProductManager();
 
 const app = express();
 const PORT = 8080;
@@ -16,6 +19,12 @@ app.engine('handlebars', engine({
     allowProtoMethodsByDefault: true,     // Cumple la misma funcion
   },                                      //
   helpers: {
+    formatNumber: (number, decimals = 2) => {
+      if (number === null || number === undefined || isNaN(number)) {
+        return 'N/A';
+      }
+      return Number(number).toFixed(decimals);
+    },
     modifyImageUrl: (url, width, height) => {
       if (typeof url === 'string') {
         return url.replace(/width=\d+/, `width=${width}`)
@@ -59,6 +68,19 @@ app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
 app.use('/', viewsRouter);
 
-app.listen(PORT, () => {
+const httpServer = app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:${PORT}`);
+});
+
+const io = new Server(httpServer);
+
+io.on("connection", async (socket) => {
+  const initialProducts = await productManager.getProducts(1, 15);
+
+  socket.emit('products', initialProducts);
+
+  socket.on('requestPage', async ({ page, limit, sort }) => {
+    const products = await productManager.getProducts(page, limit, sort);
+    socket.emit('products', products);
+  });
 });

@@ -1,40 +1,68 @@
 const socket = io();
 
 socket.on('connect', () => {
-  console.log('Conectado al servidor');
+  console.log('Connected to server');
 });
 
-
-
 socket.on('disconnect', () => {
-  console.log('Desconectado del servidor');
+  console.log('Disconnecteted from server');
 });
 
 socket.on('products', (products) => {
-  console.log('Products received from server:', products);
   renderProductos(products);
 });
 
-function renderProductos(productos) {
-  console.log('Rendering products:', productos);
+function renderProductos(products) {
   const productsContainer = document.getElementById('productsContainer');
-  if (!productsContainer) {
-    console.error("No se encontró el contenedor de productos");
-    return;
-  }
+  const limitContainer = document.getElementById('limitContainer');
+  const paginationContainer = document.getElementById('pagination');
+  const form = document.createElement('form');
 
   productsContainer.innerHTML = '';
+  limitContainer.innerHTML = '';
+  paginationContainer.innerHTML = '';
 
-  productos.forEach((producto) => {
-    console.log('Rendering product:', producto);
+  form.classList.add('mb-4');
+  form.innerHTML = `
+    <label for="cant" class="text-white">Cantidad de productos mostrados</label>
+    <select name="limit" id="cant" class="bg-slate-300 border border-slate-400 rounded px-2 py-1">
+      <option value="5" ${products.productsList.limit == 5 ? 'selected' : ''}>5</option>
+      <option value="10" ${products.productsList.limit == 10 ? 'selected' : ''}>10</option>
+      <option value="15" ${products.productsList.limit == 15 ? 'selected' : ''}>15</option>
+      <option value="30" ${products.productsList.limit == 30 ? 'selected' : ''}>30</option>
+      <option value="50" ${products.productsList.limit == 50 ? 'selected' : ''}>50</option>
+      <option value="75" ${products.productsList.limit == 75 ? 'selected' : ''}>75</option>
+      <option value="100" ${products.productsList.limit == 100 ? 'selected' : ''}>100</option>
+      <option value="200" ${products.productsList.limit == 200 ? 'selected' : ''}>200</option>
+    </select>
+  `;
+
+  limitContainer.appendChild(form);
+
+  const selectLimit = document.getElementById('cant');
+  selectLimit.addEventListener('change', () => {
+    const selectedLimit = selectLimit.value;
+    loadPage(1, selectedLimit);
+  });
+
+
+  products.productsList.docs.forEach((product) => {
     const card = document.createElement('div');
+    let label;
+    let value;
     card.classList.add('flex', 'flex-col', 'justify-between', 'bg-slate-600', 'rounded', 'w-60', 'min-h-32', 'h-[400px]', 'p-1');
+    product.description.forEach((desc) => {
+      if (desc.label == "MEDIDAS") {
+        label = desc.label;
+        value = desc.value
+      }
+    });
     card.innerHTML = `
       <div class="flex flex-col justify-center text-white">
-      <img src="${producto.thumbnails[0]}" alt="${producto.title}" class="w-full h-auto object-cover">
-      <h3 class="text-xl itemDescripcion">${producto.title}</h3>
-      <h3 class="text-sm">${producto.description}</h3>
-      <p>$${producto.price}</p>
+      <img src="${product.thumbnails[0]}" alt="${product.title}" class="w-full h-auto object-cover">
+      <h3 class="text-xl itemDescripcion">${product.title}</h3>
+      <h3 class="text-sm">${label}: ${value}</h3>
+      <p>$${product.price}</p>
       </div>
       <div class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-3 text-center rounded text-white">
       <button>Eliminar</button>
@@ -45,24 +73,80 @@ function renderProductos(productos) {
 
     // Agregamos un listener para eliminar el producto
     card.querySelector('button').addEventListener('click', () => {
-      console.log('Deleting product with id:', producto.id);
-      deleteProduct(producto.id);
+      console.log('Deleting product with id:', product.id);
+      deleteProduct(product.id);
     });
   });
+
+  paginationContainer.classList.add('flex', 'flex-row', 'gap-4', 'pt-4');
+
+  const prevLink = document.createElement('a');
+
+  prevLink.classList.add(
+    'bg-slate-400/90',
+    'border-slate-400',
+    'border',
+    'hover:bg-slate-500',
+    'active:bg-slate-300',
+    'active:text-black',
+    'text-white',
+    'mt-2',
+    'px-2',
+    'py-1',
+    'rounded'
+  );
+
+  prevLink.innerText = 'Página Anterior';
+
+  if (products.productsList.hasPrevPage) {
+    prevLink.href = ``;
+    prevLink.addEventListener('click', () => {
+      loadPage(products.productsList.prevPage, products.productsList.limit);
+    });
+  } else {
+    prevLink.classList.add('cursor-not-allowed', 'opacity-50');
+    prevLink.style.pointerEvents = 'none';
+  }
+
+  paginationContainer.appendChild(prevLink);
+
+  const nextLink = document.createElement('a');
+
+  nextLink.classList.add(
+    'bg-slate-400/90',
+    'border-slate-400',
+    'border',
+    'hover:bg-slate-500',
+    'active:bg-slate-300',
+    'active:text-black',
+    'text-white',
+    'mt-2',
+    'px-2',
+    'py-1',
+    'rounded'
+  );
+
+  nextLink.innerText = 'Página Siguiente';
+
+  if (products.productsList.hasNextPage) {
+    nextLink.href = ``;
+    nextLink.addEventListener('click', () => {
+      loadPage(products.productsList.nextPage, products.productsList.limit);
+    });
+  } else {
+    nextLink.classList.add('cursor-not-allowed', 'opacity-50');
+    nextLink.style.pointerEvents = 'none';
+  }
+
+  paginationContainer.appendChild(nextLink);
 }
 
-// Función que envía al servidor un delete request para eliminar el producto
 const deleteProduct = async (id) => {
   socket.emit('deleteProduct', await id);
 };
 
-// Función que muestra el formulario para agregar un producto
 function addProduct() {
   const formContainer = document.getElementById('formContainer');
-  if (!formContainer) {
-    console.error("No se encontró el contenedor del formulario");
-    return;
-  }
 
   const form = document.createElement('form');
   form.classList.add('form', 'fixed', 'mt-10', 'w-96');
@@ -118,7 +202,7 @@ function addProduct() {
   socket.on('errorAddingProduct', (err) => {
     console.error(`Error al agregar el producto: ${err}`)
   })
-  
+
 }
 
 function addProductToServer() {
@@ -130,7 +214,7 @@ function addProductToServer() {
   const stock = parseInt(document.getElementById('stock').value, 10);
   const category = document.getElementById('category').value;
   const status = document.getElementById('status').value;
-  
+
   const form = {
     title,
     description,
@@ -144,7 +228,6 @@ function addProductToServer() {
 
   socket.emit('addProduct', form);
 
-  // Limpiamos los campos del formulario después de enviarlo
   deleteAllInputs(form);
 }
 
@@ -159,5 +242,8 @@ function deleteAllInputs() {
   document.getElementById('status').value = '';
 }
 
-// Añadimos el Event Listener al botón para mostrar el formulario
 addProduct();
+
+function loadPage(page, limit, sort) {
+  socket.emit('requestPage', { page, limit, sort });
+}
