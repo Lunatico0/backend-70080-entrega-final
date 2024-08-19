@@ -6,16 +6,28 @@ const router = Router();
 router.get('/products', async (req, res) => {
   let page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit) || 15;
-  const querySort = req.query.sort
+  const querySort = req.query.sort || "defa";
   let sort = {}; 
 
   switch (querySort) {
-    case "asc":
+    case "price_asc":
       sort = { price: 1 }; 
       break;
   
-    case "desc":
+    case "price_desc":
       sort = { price: -1 }; 
+      break;
+
+    case "alpha_asc":
+      sort = { title: 1 }; 
+      break;
+
+    case "alpha_desc":
+      sort = { title: -1 }; 
+      break;
+  
+    case "defa":
+      sort = { createdAt: 1 }; 
       break;
   
     default:
@@ -46,7 +58,8 @@ router.get('/products', async (req, res) => {
     currentPage: productsList.page,
     totalPages: pages,
     lastPage: productsList.totalPages,
-    limit: limit
+    limit: limit,
+    sort: querySort
   });
 });
 
@@ -79,7 +92,8 @@ router.get('/', async (req, res) => {
     nextPage: productsList.nextPage,
     currentPage: productsList.page,
     totalPages: productsList.totalPages,
-    limit: limit
+    limit: limit,
+    sort: querySort
   });
 });
 
@@ -115,7 +129,8 @@ router.get("/realTimeProducts", async (req, res) => {
     nextPage: productsList.nextPage,
     currentPage: productsList.page,
     totalPages: productsList.totalPages,
-    limit: limit
+    limit: limit,
+    sort: querySort
   });
 });
 

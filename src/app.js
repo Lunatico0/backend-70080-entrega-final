@@ -31,7 +31,7 @@ app.engine('handlebars', engine({
       return a = b;
     },
     eq: function (a, b) {
-      return a === b;
+      return a == b;
     },
     subtract: function (a, b) {
       return (a - b)
