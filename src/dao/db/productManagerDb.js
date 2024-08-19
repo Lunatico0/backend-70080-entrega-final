@@ -86,8 +86,7 @@ class ProductManager {
         console.log("No se encuentra el producto");
         return "No se encuentra el producto";
       }
-
-      console.log("Se encontro: " + searchProduct);
+      
       return searchProduct;
     } catch (error) {
       console.error("Error al buscar el producto: ", error);

@@ -15,7 +15,7 @@ const PORT = 8080;
 // Configuración del motor de plantillas Handlebars
 app.engine('handlebars', engine({
   runtimeOptions: {                       //
-    allowProtoPropertiesByDefault: true,  // Por si el 'metodo' ".lean()" no funciona en productManagerDb.js
+    allowProtoPropertiesByDefault: true,  // Por si ".lean()" no funciona en productManagerDb.js
     allowProtoMethodsByDefault: true,     // Cumple la misma funcion
   },                                      //
   helpers: {
@@ -25,10 +25,22 @@ app.engine('handlebars', engine({
       }
       return Number(number).toFixed(decimals);
     },
+    add: function (a, b) {
+      return a + b;
+    },
+    and: function (a, b) {
+      return a = b;
+    },
+    eq: function (a, b) {
+      return a === b;
+    },
+    subtract: function (a, b) {
+      return (a - b)
+    },
     modifyImageUrl: (url, width, height) => {
       if (typeof url === 'string') {
         return url.replace(/width=\d+/, `width=${width}`)
-                  .replace(/height=\d+/, `height=${height}`);
+          .replace(/height=\d+/, `height=${height}`);
       }
       return url;
     },
@@ -53,6 +65,21 @@ app.engine('handlebars', engine({
         default:
           return options.inverse(this);
       }
+    },
+    or: function (a, b) {
+      return a || b;
+    },
+    gt: function (a, b) {
+      return a > b;
+    },
+    lt: function (a, b) {
+      return a < b;
+    },
+    gte: (a, b) => {
+      return a >= b;
+    },
+    lte: (a, b) => {
+      return a <= b;
     }
   }
 }));

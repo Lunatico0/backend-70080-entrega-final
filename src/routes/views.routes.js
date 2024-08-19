@@ -24,6 +24,19 @@ router.get('/products', async (req, res) => {
 
   const { prodRender, productsList } = await manager.getProducts(page, limit, sort);
 
+  const maxPagesToShow = 5;
+  let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+  let endPage = Math.min(startPage + maxPagesToShow - 1, productsList.totalPages);
+
+  if (endPage - startPage + 1 < maxPagesToShow) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
   res.render('home', {
     products: prodRender,
     hasPrevPage: productsList.hasPrevPage,
@@ -31,7 +44,8 @@ router.get('/products', async (req, res) => {
     prevPage: productsList.prevPage,
     nextPage: productsList.nextPage,
     currentPage: productsList.page,
-    totalPages: productsList.totalPages,
+    totalPages: pages,
+    lastPage: productsList.totalPages,
     limit: limit
   });
 });

@@ -14,7 +14,7 @@
   </select>
 </form>
 
-<div class="flex justify-center items-center gap-2 flex-wrap">
+<div class="flex justify-center w-3/4 items-center gap-2 flex-wrap">
   {{#each products}}
   <div class="flex flex-col justify-between bg-slate-600 rounded w-60 min-h-32 h-[400px] p-1">
     <div class="flex flex-col object-fill">
@@ -38,7 +38,7 @@
   {{/each}}
 </div>
 
-<div class="flex flex-row gap-4 pt-4 botones">
+<div class="flex flex-row gap-4 pt-4 botones pagination">
   <a id="prevPageLink" class="
     {{#if hasPrevPage}}
     bg-slate-400/90 
@@ -62,8 +62,54 @@
     cursor-not-allowed
     opacity-50
     {{/if}}" href="{{#if hasPrevPage}}/products?page={{prevPage}}&limit={{limit}}{{else}}#{{/if}}">
-    Página Anterior
+    ◀️
   </a>
+
+  {{#if (gte currentPage (add 1 3)) }}
+    <a id="prevPageLink" class="bg-slate-400/90 
+      border-slate-400 border 
+      hover:bg-slate-500 
+      active:bg-slate-300
+      active:text-black 
+      text-white
+        mt-2 px-2 py-1 
+        rounded" 
+      href="/products?page={{1}}&limit={{limit}}">
+      1
+    </a>
+    {{#if (gt currentPage 4)}}
+      <p class="text-white px-2 pt-4">...</p>
+    {{/if}}
+  {{/if}}
+
+  {{#each totalPages}}
+  <a href="/products?page={{this}}&limit={{../limit}}{{#if ../sort}}&sort={{../sort}}{{/if}}" class=" bg-slate-400/90 
+            border-slate-400 border 
+            hover:bg-slate-500 
+            active:bg-slate-300
+            active:text-black 
+            text-white
+              mt-2 px-2 py-1 
+              rounded
+    {{#if (eq this ../currentPage)}}active{{/if}}">{{this}}</a>
+  {{/each}}
+
+  {{#if (and (gte lastPage 6) (lte currentPage (subtract lastPage 3)))}}         {{!--lte: function (a, b) {return a <= b;}--}}
+    {{#if (gt lastPage 7)}}
+      <p class="text-white px-2 pt-4">...</p>
+    {{/if}}
+    <a id="nextPageLink" class="bg-slate-400/90 
+      border-slate-400 border 
+      hover:bg-slate-500 
+      active:bg-slate-300
+      active:text-black 
+      text-white
+        mt-2 px-2 py-1 
+        rounded" 
+      href="/products?page={{lastPage}}&limit={{limit}}">
+      {{lastPage}}
+    </a>
+  {{/if}}
 
   <a id="nextPageLink" class="
     {{#if hasNextPage}}
@@ -88,7 +134,7 @@
     cursor-not-allowed
     opacity-50
     {{/if}}" href="{{#if hasNextPage}}/products?page={{nextPage}}&limit={{limit}}{{else}}#{{/if}}">
-    Página Siguiente
+    ▶️
   </a>
 </div>
 
@@ -96,13 +142,13 @@
   document.getElementById('cant').addEventListener('change', function () {
     document.getElementById('limitForm').submit();
   });
-  
+
   document.getElementById('prevPageLink').addEventListener('click', function (event) {
     if (this.classList.contains('cursor-not-allowed')) {
       event.preventDefault();
     }
   });
-  
+
   document.getElementById('nextPageLink').addEventListener('click', function (event) {
     if (this.classList.contains('cursor-not-allowed')) {
       event.preventDefault();
@@ -123,5 +169,11 @@
   .buttons {
     pointer-events: none;
     cursor: not-allowed;
+  }
+
+  .pagination a.active {
+    background-color: #cbd5e1;
+    color: black;
+    border: 1px solid #94a3b8;
   }
 </style>

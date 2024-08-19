@@ -15,10 +15,10 @@ class CartManager {
   async getCarts() {
     try {
       const allCarts = await CartModel.find(); 
-      !allCarts ? console.log('No carts found') : console.log(allCarts);
+      if(!allCarts) throw new Error('No carts found');
       return allCarts;
     } catch (error) {
-      console.log('Error getting all carts:', error);
+      throw new Error('Error getting all carts:', error);
     }
   };
 
@@ -28,7 +28,7 @@ class CartManager {
       if(!foundCart) throw new Error('Cart not found');
       return foundCart;
     } catch (error) {
-      console.log('Error getting cart by ID:', error);
+      throw new Error('Error getting cart by ID:', error);
     }
   };
 
@@ -45,7 +45,7 @@ class CartManager {
       await cart.save();
       return cart;
     } catch (error) {
-      console.log('Error adding product to cart:', error);
+      throw new Error('Error adding product to cart:', error);
     }
   };
 
@@ -61,23 +61,20 @@ class CartManager {
           await cart.save();
           return cart;
         } else {
-          console.log("No se encontró el producto en el carrito");
-          return null;
+          throw new Error("No se encontró el producto en el carrito");
         }
       } else {
-        console.log("No se encontró el carrito");
-        return null;
+        throw new Error("No se encontró el carrito");
       }
     } catch (error) {
-      console.log('Error deleting product from cart:', error);
-      throw error;
+      throw new Error('Error deleting product from cart:', error);
     }
   };
 
   async deleteCart(idCart) {
     try {
       const result = await CartModel.deleteOne({ _id: idCart });
-      !result ? console.log('Error deleting cart') : console.log('Cart deleted successfully');
+      if(!result) throw new Error('Error deleting cart');
       return result;
     } catch (error) {
       console.log('Error deleting cart:', error);
