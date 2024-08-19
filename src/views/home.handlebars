@@ -94,8 +94,8 @@
     {{#if (eq this ../currentPage)}}active{{/if}}">{{this}}</a>
   {{/each}}
 
-  {{#if (and (gte lastPage 6) (lte currentPage (subtract lastPage 3)))}}         {{!--lte: function (a, b) {return a <= b;}--}}
-    {{#if (gt lastPage 7)}}
+  {{#if (and (gte lastPage 6) (lte currentPage (subtract lastPage 3)))}}
+    {{#if (lt currentPage (subtract lastPage 3))}}
       <p class="text-white px-2 pt-4">...</p>
     {{/if}}
     <a id="nextPageLink" class="bg-slate-400/90 

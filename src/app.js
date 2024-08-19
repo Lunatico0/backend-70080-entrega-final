@@ -12,7 +12,6 @@ const productManager = new ProductManager();
 const app = express();
 const PORT = 8080;
 
-// Configuración del motor de plantillas Handlebars
 app.engine('handlebars', engine({
   runtimeOptions: {                       //
     allowProtoPropertiesByDefault: true,  // Por si ".lean()" no funciona en productManagerDb.js
@@ -86,11 +85,9 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars');
 app.set('views', 'src/views');
 
-// Middlewares 
 app.use(express.json());
 app.use(express.static("./src/public"));
 
-// Rutas
 app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
 app.use('/', viewsRouter);
