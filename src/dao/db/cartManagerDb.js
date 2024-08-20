@@ -1,4 +1,5 @@
 import CartModel from '../models/cart.model.js'
+import mongoose from 'mongoose';
 
 class CartManager {
 
@@ -24,8 +25,8 @@ class CartManager {
 
   async getCartById(id) {
     try {
-      const foundCart = await CartModel.findById(id);
-      if(!foundCart) throw new Error('Cart not found');
+      const foundCart = await CartModel.findById(id).populate('products.product');
+      if (!foundCart) throw new Error('Cart not found');
       return foundCart;
     } catch (error) {
       throw new Error('Error getting cart by ID:', error);
