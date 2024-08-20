@@ -38,7 +38,6 @@ router.post("/:cid/products/:pid", async (req, res) => {
   const quantity = req.body.quantity || 1;
   try {
     const result = await manager.addProductToCart(cid, pid, quantity);
-    console.log('result: ', result);
     !result ? res.status(400).send({ message: "Error al agregar producto al carrito" }) : res.status(200).send({ message: "Producto agregado al carrito exitosamente", result });
   } catch (error) {
     console.log("Error al agregar producto al carrito: ", error);
@@ -52,7 +51,6 @@ router.put("/:cid/products/:pid", async (req, res) => {
   const quantity = req.body.quantity || 1;
   try {
     const result = await manager.addProductToCart(cid, pid, quantity);
-    console.log('result: ', result);
     !result ? res.status(400).send({ message: "Error al agregar producto al carrito" }) : res.status(200).send({ message: "Producto agregado al carrito exitosamente", result });
   } catch (error) {
     console.log("Error al agregar producto al carrito: ", error);

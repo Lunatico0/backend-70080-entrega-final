@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 
 class CartManager {
 
-  async addCart() {    
+  async addCart() {
     try {
-      const newCart = new CartModel({products:[]});
+      const newCart = new CartModel({ products: [] });
       await newCart.save();
       return newCart;
     } catch (error) {
@@ -15,8 +15,8 @@ class CartManager {
 
   async getCarts() {
     try {
-      const allCarts = await CartModel.find(); 
-      if(!allCarts) throw new Error('No carts found');
+      const allCarts = await CartModel.find();
+      if (!allCarts) throw new Error('No carts found');
       return allCarts;
     } catch (error) {
       throw new Error('Error getting all carts:', error);
@@ -36,27 +36,26 @@ class CartManager {
   async addProductToCart(idCart, idProduct, quantity = 1) {
     try {
       const cart = await this.getCartById(idCart);
-      const productfound = cart.products.find((prod) => prod.product.toString() === idProduct);
-      if(productfound) {
-        productfound.quantity += quantity;
+      const productFound = cart.products.find(p => p.product.equals(idProduct))
+      if (productFound) {
+        productFound.quantity += quantity;
       } else {
         cart.products.push({ product: idProduct, quantity });
       }
-      cart.markModified();
       await cart.save();
       return cart;
     } catch (error) {
       throw new Error('Error adding product to cart:', error);
     }
-  };
+  }
 
   async deleteProductFromCart(idCart, idProduct) {
     try {
       let cart = await this.getCartById(idCart);
-  
-      if(cart){
+
+      if (cart) {
         const productIndex = cart.products.findIndex(product => product._id.toString() === idProduct);
-  
+
         if (productIndex > -1) {
           cart.products.splice(productIndex, 1);
           await cart.save();
@@ -75,7 +74,7 @@ class CartManager {
   async deleteCart(idCart) {
     try {
       const result = await CartModel.deleteOne({ _id: idCart });
-      if(!result) throw new Error('Error deleting cart');
+      if (!result) throw new Error('Error deleting cart');
       return result;
     } catch (error) {
       console.log('Error deleting cart:', error);

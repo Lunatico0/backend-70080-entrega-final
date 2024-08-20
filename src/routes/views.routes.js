@@ -119,7 +119,8 @@ router.get('/', async (req, res) => {
     totalPages: pages,
     lastPage: productsList.totalPages,
     limit: limit,
-    sort: querySort
+    sort: querySort,
+    id: productsList.docs._id
   });
 });
 

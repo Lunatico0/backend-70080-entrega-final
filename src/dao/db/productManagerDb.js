@@ -37,18 +37,14 @@ class ProductManager {
   };
 
   async getProducts(page, limit, sort) {
-    page ? page : 1;
-    limit ? limit : 0;
+    page = page || 1;
+    limit = limit || 0;
     try {
-      const productsList = await ProductModel.paginate({}, { limit, page, sort });
-      const prodRender = productsList.docs.map(prod => {
-        const { _id, ...data } = prod.toObject();
-        return data;
-      });
-      
-      return {prodRender, productsList};
+        const productsList = await ProductModel.paginate({}, { limit, page, sort });
+        const prodRender = productsList.docs.map(prod => prod.toObject());
+        return { prodRender, productsList };
     } catch (error) {
-      console.log("Error al obtener productos:", error);
+        console.log("Error al obtener productos:", error);
     }
   }
 
