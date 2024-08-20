@@ -1,6 +1,6 @@
 <h1 class="my-8 text-white text-4xl font-bold">Productos</h1>
 
-<div class="flex justify-between items-center w-3/4 mb-4">
+<div class="flex md:flex-row flex-col text-xs md:text-base justify-between items-center max-w-[80rem] w-3/4 px-6 mb-4">
   <form id="limitForm" action="?" class="flex gap-2 items-center">
     <label for="cant" class="text-white">Mostrando</label>
     <select name="limit" id="cant" class="bg-slate-300 border border-slate-400 rounded px-2 py-1">
@@ -27,15 +27,15 @@
     </select>
 </div>
 
-<div class="flex justify-center w-3/4 items-center gap-2 flex-wrap">
+<div class="flex text-xs md:text-sm justify-center w-3/4 items-center gap-2 flex-wrap">
   {{#each products}}
-  <div class="flex flex-col justify-between bg-slate-600 rounded w-60 min-h-32 h-[400px] p-1">
+  <div class="flex flex-col justify-between bg-slate-600 rounded min-h-24 w-60 md:min-h-32 h-[380px] md:h-[400px] p-1">
     <div class="flex flex-col object-fill">
       <img src="{{modifyImageUrl this.thumbnails.[0] '240' '240'}}" class="w-full h-auto rounded-sm object-cover">
     </div>
     <div class="text-white flex flex-col gap-2">
-      <h2 class="text-xl text-white leading-6 itemDescripcion"> {{this.title}} </h2>
-      <h3 class="text-sm text-white leading-4">
+      <h2 class="text-white text-lg md:text-xl leading-6 itemDescripcion"> {{this.title}} </h2>
+      <h3 class="text-white text-xs md:text-sm leading-4">
         {{#each description}}
         {{#ifCond this.label '==' "MEDIDAS"}}
         {{this.label}}: {{this.value}}

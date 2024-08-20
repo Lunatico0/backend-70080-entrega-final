@@ -41,7 +41,7 @@ class CartManager {
       } else {
         cart.products.push({ product: idProduct, quantity });
       }
-      cart.markModified(); // Marcar el documento como modificado para guardar los cambios en MongoDB
+      cart.markModified();
       await cart.save();
       return cart;
     } catch (error) {
