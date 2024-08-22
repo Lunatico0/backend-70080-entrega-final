@@ -36,16 +36,29 @@ class ProductManager {
     }
   };
 
-  async getProducts(page, limit, sort) {
-    page = page || 1;
-    limit = limit || 0;
-    try {
-        const productsList = await ProductModel.paginate({}, { limit, page, sort });
-        const prodRender = productsList.docs.map(prod => prod.toObject());
-        return { prodRender, productsList };
-    } catch (error) {
-        console.log("Error al obtener productos:", error);
+  async getProducts(page, limit, sort, category = null, subcategory = null) {
+    const query = {};
+
+    if (category) {
+      query["category.categoriaId"] = category;
     }
+
+    if (subcategory) {
+      query["category.subcategoria.subcategoriaId"] = subcategory;
+    }
+
+    const options = {
+      page,
+      limit,
+      sort,
+    };
+
+    const productsList = await ProductModel.paginate(query, options);
+
+    return {
+      prodRender: productsList.docs,
+      productsList,
+    };
   }
 
   async updateProduct(id, data) {

@@ -1,4 +1,39 @@
-<h1 class="my-8 text-white text-4xl font-bold">Productos</h1>
+<header class="max-w-[80rem] w-3/4 flex justify-center">
+  <nav class="nav w-full">
+    <ul class="navMenu flex justify-between w-full">
+      <div>
+        <li class="navItem">
+          <a href="/" class="my-8 text-white text-4xl font-bold navLink{{#ifCond currentPath '==' '/'}}font-extrabold text-5xl{{/ifCond}}">
+            <h1 class="">Productos</h1>
+          </a>
+        </li>
+      </div>
+      <div class="flex">
+        {{#each categories}}
+        <li class="navItem">
+          <a href="?category={{this.categoriaId}}"
+            class="{{#ifCond ../currentCategory '==' this.categoriaId}}active navLink{{else}}navLink{{/ifCond}}">
+            {{this.categoriaNombre}}
+          </a>
+
+          {{#if this.subcategorias}}
+          <ul class="subMenu">
+            {{#each this.subcategorias}}
+            <li class="navItem">
+              <a href="?category={{../categoriaId}}&subcategory={{this.subcategoriaId}}"
+                class="{{#ifCond ../../currentSubCategory '==' this.subcategoriaId}}active navLink{{else}}navLink{{/ifCond}}">
+                {{this.subcategoriaNombre}}
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+          {{/if}}
+        </li>
+        {{/each}}
+      </div>
+    </ul>
+  </nav>
+</header>
 
 <div class="flex md:flex-row flex-col text-xs md:text-base justify-between items-center max-w-[80rem] w-3/4 px-6 mb-4">
   <form id="limitForm" action="?" class="flex gap-2 items-center">
@@ -44,107 +79,58 @@
       </h3>
       <p class="text-white"> ${{formatNumber price 2}} </p>
     </div>
-    <a
-      class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 flex justify-center rounded text-white addProduct"
+    <a class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 flex justify-center rounded text-white addProduct"
       id="{{this._id}}">Agregar</a>
   </div>
   {{/each}}
 </div>
 
 <div class="flex flex-row gap-4 pt-4 botones pagination">
-  <a id="prevPageLink" class="
-    {{#if hasPrevPage}}
-    bg-slate-400/90 
-    border-slate-400 border 
-    hover:bg-slate-500 
-    active:bg-slate-300
-    active:text-black 
-    text-white
-    mt-2 px-2 py-1 
-    rounded
-    {{else}}
-    buttons
-    bg-slate-400/90 
-    border-slate-400 border 
-    hover:bg-slate-500 
-    active:bg-slate-300
-    active:text-black 
-    text-white
-    mt-2 px-2 py-1 
-    rounded
-    cursor-not-allowed
-    opacity-50
-    {{/if}}" href="{{#if hasPrevPage}}/products?page={{prevPage}}&limit={{limit}}{{else}}#{{/if}}">
-    ◀️
-  </a>
+<a id="prevPageLink" class="
+  {{#if hasPrevPage}}
+  bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded
+  {{else}}
+  bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded cursor-not-allowed opacity-50
+  {{/if}}"
+  href="{{#if hasPrevPage}}/products?page={{prevPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}{{/if}}">
+  ◀️
+</a>
 
-  {{#if (gte currentPage (add 1 3)) }}
-  <a id="prevPageLink" class="bg-slate-400/90 
-      border-slate-400 border 
-      hover:bg-slate-500 
-      active:bg-slate-300
-      active:text-black 
-      text-white
-        mt-2 px-2 py-1 
-        rounded" href="/products?page=1&limit={{limit}}">
-    1
-  </a>
-  {{#if (gt currentPage 4)}}
-  <p class="text-white px-2 pt-4">...</p>
-  {{/if}}
-  {{/if}}
+
+  {{#ifCond  (gt lastPage 5 ) '==' (gte currentPage 4)}}
+    <a id="prevEnumPageLink"
+      href="/products?page=1&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}"
+      class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded">
+      1
+    </a>
+    {{#if (gt currentPage 3)}}
+    <p class="text-white px-2 pt-4">...</p>
+    {{/if}}
+  {{/ifCond}}
 
   {{#each totalPages}}
-  <a href="/products?page={{this}}&limit={{../limit}}{{#if ../sort}}&sort={{../sort}}{{/if}}" class=" bg-slate-400/90 
-            border-slate-400 border 
-            hover:bg-slate-500 
-            active:bg-slate-300
-            active:text-black 
-            text-white
-              mt-2 px-2 py-1 
-              rounded
+  <a href="/products?page={{this}}&limit={{../limit}}{{#if ../sort}}&sort={{../sort}}{{/if}}{{#if ../currentCategory}}&category={{../currentCategory}}{{/if}}{{#if ../currentSubCategory}}&subcategory={{../currentSubCategory}}{{/if}}"
+    class=" bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded
     {{#if (eq this ../currentPage)}}active{{/if}}">{{this}}</a>
   {{/each}}
 
-  {{#if (and (gte lastPage 6) (lte currentPage (subtract lastPage 3)))}}
+  {{#if (lt currentPage (subtract lastPage 4))}}
   {{#if (lt currentPage (subtract lastPage 3))}}
   <p class="text-white px-2 pt-4">...</p>
   {{/if}}
-  <a id="nextPageLink" class="bg-slate-400/90 
-      border-slate-400 border 
-      hover:bg-slate-500 
-      active:bg-slate-300
-      active:text-black 
-      text-white
-        mt-2 px-2 py-1 
-        rounded" href="/products?page={{lastPage}}&limit={{limit}}">
+  <a id="nextPageLink"
+    href="/products?page={{lastPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}"
+    class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded">
     {{lastPage}}
   </a>
   {{/if}}
 
-  <a id="nextPageLink" class="
-    {{#if hasNextPage}}
-    bg-slate-400/90
-    border-slate-400 border 
-    hover:bg-slate-500 
-    active:bg-slate-300
-    active:text-black 
-    text-white
-    mt-2 px-2 py-1 
-    rounded
+  <a id="nextEnumPageLink" class="
+    {{#if hasNextPage}} bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded
     {{else}}
-    buttons
-    bg-slate-400/90 
-    border-slate-400 border 
-    hover:bg-slate-500 
-    active:bg-slate-300
-    active:text-black 
-    text-white
-    mt-2 px-2 py-1 
-    rounded
-    cursor-not-allowed
-    opacity-50
-    {{/if}}" href="{{#if hasNextPage}}/products?page={{nextPage}}&limit={{limit}}{{else}}#{{/if}}">
+    buttons bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded cursor-not-allowed opacity-50
+    {{/if}}"
+    href="{{#if hasNextPage}}/products?page={{nextPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}{{/if}}">
     ▶️
   </a>
 </div>
@@ -182,50 +168,105 @@
     }
   });
 
-let data;
+  let data;
 
-const main = async () => {
-  let cart = await fetch('http://localhost:8080/api/carts', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  });
-  data = await cart.json();
-}
-
-main();
-
-const addButtons = Array.from(document.getElementsByClassName('addProduct')); 
-
-addButtons.forEach(button => {
-  button.addEventListener('click', async () => {
-    const productId = button.id;
-    const url = `http://localhost:8080/api/carts/${data.newCart._id}/products/${productId}`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ productId })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Producto agregado al carrito:', result);
-      } else {
-        console.error('Error al agregar producto al carrito:', response.statusText);
+  const main = async () => {
+    let cart = await fetch('http://localhost:8080/api/carts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       }
-    } catch (err) {
-      console.error('Error de red:', err);
-    }
+    });
+    data = await cart.json();
+  }
+
+  main();
+
+  const addButtons = Array.from(document.getElementsByClassName('addProduct'));
+
+  addButtons.forEach(button => {
+    button.addEventListener('click', async () => {
+      const productId = button.id;
+      const url = `http://localhost:8080/api/carts/${data.newCart._id}/products/${productId}`;
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ productId })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Producto agregado al carrito:', result);
+        } else {
+          console.error('Error al agregar producto al carrito:', response.statusText);
+        }
+      } catch (err) {
+        console.error('Error de red:', err);
+      }
+    });
   });
-});
 </script>
 
 <style>
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .navMenu {
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .navItem {
+    list-style: none;
+    position: relative;
+  }
+
+  .navLink {
+    text-decoration: none;
+    color: whitesmoke;
+    padding: 1rem;
+    display: block;
+  }
+
+  .subMenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: slategrey;
+    @include box-shadow($box-shadow-default);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .navLink:hover,
+  .navLink:hover .subMenu {
+    display: block;
+    color: red;
+  }
+
+  .subNavItem {
+    list-style: none;
+  }
+
+  .subNavLink {
+    text-decoration: none;
+    color: whitesmoke;
+    padding: 0.5rem 1rem;
+    display: block;
+  }
+
+  .subNavLink:hover {
+    color: red;
+  }
+
   .itemDescripcion {
     display: -webkit-box;
     -webkit-box-orient: vertical;

@@ -3,31 +3,67 @@ import ProductManager from '../dao/db/productManagerDb.js';
 const manager = new ProductManager();
 const router = Router();
 
-router.get("/", async (req, res) => {
-  const limit = req.query.limit;
-  const page = req.query.page;
-  const querySort = req.query.sort
-  let sort = {}; 
+router.get('/', async (req, res) => {
+  let page = parseInt(req.query.page) || 1;
+  let limit = parseInt(req.query.limit) || 15;
+  const querySort = req.query.sort || "defa";
+  let sort = {};
 
   switch (querySort) {
-    case "asc":
-      sort = { price: 1 }; 
+    case "price_asc":
+      sort = { price: 1 };
       break;
   
-    case "desc":
-      sort = { price: -1 }; 
+    case "price_desc":
+      sort = { price: -1 };
+      break;
+
+    case "alpha_asc":
+      sort = { title: 1 };
+      break;
+
+    case "alpha_desc":
+      sort = { title: -1 };
+      break;
+  
+    case "defa":
+      sort = { createdAt: 1 };
       break;
   
     default:
       break;
   }
 
-  try {
-    const products = await manager.getProducts(page, limit, sort);
-    res.send(products.productsList.docs);
-  } catch (error) {
-    console.log(error)
+  const { prodRender, productsList } = await manager.getProducts(page, limit, sort);
+
+  const maxPagesToShow = 5;
+  let startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+  let endPage = Math.min(startPage + maxPagesToShow - 1, productsList.totalPages);
+
+  if (endPage - startPage + 1 < maxPagesToShow) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
   }
+
+  const pages = [];
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  const prevLink = productsList.hasPrevPage ? `/api/products?page=${productsList.prevPage}&limit=${limit}&sort=${querySort}` : null;
+  const nextLink = productsList.hasNextPage ? `/api/products?page=${productsList.nextPage}&limit=${limit}&sort=${querySort}` : null;
+
+  res.json({
+    status: "success",
+    payload: prodRender,
+    totalPages: productsList.totalPages,
+    prevPage: productsList.prevPage,
+    nextPage: productsList.nextPage,
+    page: productsList.page,
+    hasPrevPage: productsList.hasPrevPage,
+    hasNextPage: productsList.hasNextPage,
+    prevLink: prevLink,
+    nextLink: nextLink
+  });
 });
 
 router.get("/:pid", async (req, res) => {
