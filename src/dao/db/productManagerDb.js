@@ -1,4 +1,5 @@
 import ProductModel from '../models/product.model.js';
+import mongoose from 'mongoose';
 
 class ProductManager {
   async addProduct({ title, description, price, code, stock, category, thumbnails }) {
@@ -46,19 +47,23 @@ class ProductManager {
     if (subcategory) {
       query["category.subcategoria.subcategoriaId"] = subcategory;
     }
-
+  
     const options = {
       page,
       limit,
       sort,
     };
-
-    const productsList = await ProductModel.paginate(query, options);
-
-    return {
-      prodRender: productsList.docs,
-      productsList,
-    };
+  
+    try {
+      const productsList = await ProductModel.paginate(query, options);
+      return {
+        prodRender: productsList.docs,
+        productsList,
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      throw new Error('Failed to fetch products');
+    }
   }
 
   async updateProduct(id, data) {
@@ -95,7 +100,7 @@ class ProductManager {
         console.log("No se encuentra el producto");
         return "No se encuentra el producto";
       }
-      
+
       return searchProduct;
     } catch (error) {
       console.error("Error al buscar el producto: ", error);

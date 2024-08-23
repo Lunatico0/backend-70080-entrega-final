@@ -12,7 +12,6 @@ const productManager = new ProductManager();
 const app = express();
 const PORT = 8080;
 
-
 app.engine('handlebars', engine({
   runtimeOptions: {                       //
     allowProtoPropertiesByDefault: true,  // Por si ".lean()" no funciona en productManagerDb.js
@@ -80,6 +79,9 @@ app.engine('handlebars', engine({
     },
     lte: (a, b) => {
       return a <= b;
+    },
+    multiply: (a, b) => {
+      return a * b;
     }
   }
 }));

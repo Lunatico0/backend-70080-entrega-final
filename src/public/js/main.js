@@ -23,6 +23,8 @@ function renderProductos(products) {
   paginationContainer.innerHTML = '';
 
   form.classList.add('mb-4');
+  form.id = 'limitForm';
+  form.action = '?'
   form.innerHTML = `
     <label for="cant" class="text-white">Cantidad de productos mostrados</label>
     <select name="limit" id="cant" class="bg-slate-300 border border-slate-400 rounded px-2 py-1">
@@ -81,63 +83,33 @@ function renderProductos(products) {
   paginationContainer.classList.add('flex', 'flex-row', 'gap-4', 'pt-4');
 
   const prevLink = document.createElement('a');
-
-  prevLink.classList.add(
-    'bg-slate-400/90',
-    'border-slate-400',
-    'border',
-    'hover:bg-slate-500',
-    'active:bg-slate-300',
-    'active:text-black',
-    'text-white',
-    'mt-2',
-    'px-2',
-    'py-1',
-    'rounded'
-  );
-
+  prevLink.classList.add('bg-slate-400/90', 'border-slate-400', 'border', 'hover:bg-slate-500', 'active:bg-slate-300', 'active:text-black', 'text-white', 'mt-2', 'px-2', 'py-1', 'rounded');
   prevLink.innerText = 'Página Anterior';
-
   if (products.productsList.hasPrevPage) {
-    prevLink.href = ``;
-    prevLink.addEventListener('click', () => {
+    prevLink.href = `?page=${products.productsList.prevPage}&limit=${products.productsList.limit}${products.productsList.sort ? `&sort=${products.productsList.sort}` : ''}`;
+    prevLink.addEventListener('click', (e) => {
+      e.preventDefault();
       loadPage(products.productsList.prevPage, products.productsList.limit);
     });
   } else {
     prevLink.classList.add('cursor-not-allowed', 'opacity-50');
     prevLink.style.pointerEvents = 'none';
   }
-
   paginationContainer.appendChild(prevLink);
 
   const nextLink = document.createElement('a');
-
-  nextLink.classList.add(
-    'bg-slate-400/90',
-    'border-slate-400',
-    'border',
-    'hover:bg-slate-500',
-    'active:bg-slate-300',
-    'active:text-black',
-    'text-white',
-    'mt-2',
-    'px-2',
-    'py-1',
-    'rounded'
-  );
-
+  nextLink.classList.add('bg-slate-400/90', 'border-slate-400', 'border', 'hover:bg-slate-500', 'active:bg-slate-300', 'active:text-black', 'text-white', 'mt-2', 'px-2', 'py-1', 'rounded');
   nextLink.innerText = 'Página Siguiente';
-
   if (products.productsList.hasNextPage) {
-    nextLink.href = ``;
-    nextLink.addEventListener('click', () => {
+    nextLink.href = `?page=${products.productsList.nextPage}&limit=${products.productsList.limit}${products.productsList.sort ? `&sort=${products.productsList.sort}` : ''}`;
+    nextLink.addEventListener('click', (e) => {
+      e.preventDefault();
       loadPage(products.productsList.nextPage, products.productsList.limit);
     });
   } else {
     nextLink.classList.add('cursor-not-allowed', 'opacity-50');
     nextLink.style.pointerEvents = 'none';
   }
-
   paginationContainer.appendChild(nextLink);
 }
 

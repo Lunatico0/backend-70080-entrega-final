@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2'
 
-const productSchemma = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -33,22 +33,12 @@ const productSchemma = new mongoose.Schema({
   },
   category: {
     categoriaId: {
-      type: String,
+      type: String, // Almacena el ID de la categoría como string
       required: true
     },
-    categoriaNombre: {
-      type: String,
-      required: true
-    },
-    subcategoria: {
-      subcategoriaId: {
-        type: String,
-        required: true
-      },
-      subcategoriaNombre: {
-        type: String,
-        required: true
-      }
+    subcategoriaId: {
+      type: String, // Almacena el ID de la subcategoría como string
+      required: false
     }
   },
   thumbnails: {
@@ -60,8 +50,8 @@ const productSchemma = new mongoose.Schema({
   }
 });
 
-productSchemma.plugin(mongoosePaginate);
+productSchema.plugin(mongoosePaginate);
 
-const ProductModel = mongoose.model("products", productSchemma);
+const ProductModel = mongoose.model("products", productSchema);
 
 export default ProductModel;

@@ -1,9 +1,9 @@
-<header class="max-w-[80rem] w-3/4 flex justify-center">
-  <nav class="nav w-full">
-    <ul class="navMenu flex justify-between w-full">
+<header class="flex min-w-full mx-auto min-h-36 py-4 bg-gradient-to-b from-indigo-500">
+  <nav class="nav w-full mx-auto">
+    <ul class="navMenu flex mx-auto">
       <div>
         <li class="navItem">
-          <a href="/" class="my-8 text-white text-4xl font-bold navLink{{#ifCond currentPath '==' '/'}}font-extrabold text-5xl{{/ifCond}}">
+          <a href="/" class="my-8 text-white text-5xl font-extrabold navLink">
             <h1 class="">Productos</h1>
           </a>
         </li>
@@ -12,16 +12,16 @@
         {{#each categories}}
         <li class="navItem">
           <a href="?category={{this.categoriaId}}"
-            class="{{#ifCond ../currentCategory '==' this.categoriaId}}active navLink{{else}}navLink{{/ifCond}}">
+            class="text-lg text-white navLink{{#ifCond ../currentCategory '==' this.categoriaId}} active text-xl font-bold{{/ifCond}}">
             {{this.categoriaNombre}}
           </a>
 
           {{#if this.subcategorias}}
           <ul class="subMenu">
             {{#each this.subcategorias}}
-            <li class="navItem">
+            <li class="subNavItem">
               <a href="?category={{../categoriaId}}&subcategory={{this.subcategoriaId}}"
-                class="{{#ifCond ../../currentSubCategory '==' this.subcategoriaId}}active navLink{{else}}navLink{{/ifCond}}">
+                class="text-lg text-white subNavLink{{#ifCond ../../currentSubCategory '==' this.subcategoriaId}} active text-xl font-bold{{/ifCond}}">
                 {{this.subcategoriaNombre}}
               </a>
             </li>
@@ -35,7 +35,8 @@
   </nav>
 </header>
 
-<div class="flex md:flex-row flex-col text-xs md:text-base justify-between items-center max-w-[80rem] w-3/4 px-6 mb-4">
+<div
+  class="flex md:flex-row flex-col text-xs md:text-base justify-between items-center max-w-[80rem] w-3/4 px-6 pt-2  mb-4">
   <form id="limitForm" action="?" class="flex gap-2 items-center">
     <label for="cant" class="text-white">Mostrando</label>
     <select name="limit" id="cant" class="bg-slate-300 border border-slate-400 rounded px-2 py-1">
@@ -63,7 +64,7 @@
 </div>
 
 <div class="flex text-xs md:text-sm justify-center w-3/4 items-center gap-2 flex-wrap">
-  {{#each products}}
+  {{#each payload}}
   <div class="flex flex-col justify-between bg-slate-600 rounded min-h-24 w-60 md:min-h-32 h-[380px] md:h-[400px] p-1">
     <div class="flex flex-col object-fill">
       <img src="{{modifyImageUrl this.thumbnails.[0] '240' '240'}}" class="w-full h-auto rounded-sm object-cover">
@@ -79,58 +80,58 @@
       </h3>
       <p class="text-white"> ${{formatNumber price 2}} </p>
     </div>
-    <a class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 flex justify-center rounded text-white addProduct"
+    <a class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black mt-2 cursor-pointer flex justify-center rounded text-white addProduct"
       id="{{this._id}}">Agregar</a>
   </div>
   {{/each}}
 </div>
 
 <div class="flex flex-row gap-4 pt-4 botones pagination">
-<a id="prevPageLink" class="
+  <a id="prevPageLink" class="
   {{#if hasPrevPage}}
   bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded
   {{else}}
   bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded cursor-not-allowed opacity-50
   {{/if}}"
-  href="{{#if hasPrevPage}}/products?page={{prevPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}{{/if}}">
-  ◀️
-</a>
+    href="{{#if hasPrevPage}}/products?page={{prevPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}{{/if}}">
+    ◀️
+  </a>
 
-
-  {{#ifCond  (gt lastPage 5 ) '==' (gte currentPage 4)}}
-    <a id="prevEnumPageLink"
-      href="/products?page=1&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}"
-      class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded">
-      1
-    </a>
-    {{#if (gt currentPage 3)}}
-    <p class="text-white px-2 pt-4">...</p>
-    {{/if}}
+  {{#ifCond lastPage '>' 5}}
+  {{#ifCond page '>=' 4}}
+  <a id="prevEnumPageLink"
+    href="/products?page=1&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}"
+    class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded">
+    1
+  </a>
+  {{#ifCond page '>' 4}}
+  <p class="text-white px-2 pt-4">...</p>
+  {{/ifCond}}
+  {{/ifCond}}
   {{/ifCond}}
 
   {{#each totalPages}}
   <a href="/products?page={{this}}&limit={{../limit}}{{#if ../sort}}&sort={{../sort}}{{/if}}{{#if ../currentCategory}}&category={{../currentCategory}}{{/if}}{{#if ../currentSubCategory}}&subcategory={{../currentSubCategory}}{{/if}}"
     class=" bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded
-    {{#if (eq this ../currentPage)}}active{{/if}}">{{this}}</a>
+    {{#if (eq this ../page)}}active{{/if}}">{{this}}</a>
   {{/each}}
 
-  {{#if (lt currentPage (subtract lastPage 4))}}
-  {{#if (lt currentPage (subtract lastPage 3))}}
-  <p class="text-white px-2 pt-4">...</p>
-  {{/if}}
-  <a id="nextPageLink"
-    href="/products?page={{lastPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}"
-    class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded">
-    {{lastPage}}
-  </a>
-  {{/if}}
+  {{#ifCond lastPage '>' 5}}
+    {{#ifCond page '<' (subtract lastPage 2)}} {{!-- <p>{{gt lastPage 5}}</p> prueba de booleanos
+    <p>{{lt page (subtract lastPage 3)}}</p> --}}
+      {{#ifCond page '<' (subtract lastPage 3)}} 
+        <p class="text-white px-2 pt-4">...</p>
+      {{/ifCond}}
+        <a id="nextPageLink"
+          href="/products?page={{lastPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}"
+          class="bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded">
+          {{lastPage}}
+        </a>
+    {{/ifCond}}
+  {{/ifCond}}
 
-  <a id="nextEnumPageLink" class="
-    {{#if hasNextPage}} bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded
-    {{else}}
-    buttons bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded cursor-not-allowed opacity-50
-    {{/if}}"
-    href="{{#if hasNextPage}}/products?page={{nextPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}{{/if}}">
+  <a id="nextEnumPageLink" class="{{#if hasNextPage}} bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded{{else}} buttons bg-slate-400/90 border-slate-400 border hover:bg-slate-500 active:bg-slate-300 active:text-black text-white mt-2 px-2 py-1 rounded cursor-not-allowed opacity-50{{/if}}"
+  href="{{#if hasNextPage}}/products?page={{nextPage}}&limit={{limit}}{{#if sort}}&sort={{sort}}{{/if}}{{#if currentCategory}}&category={{currentCategory}}{{/if}}{{#if currentSubCategory}}&subcategory={{currentSubCategory}}{{/if}}{{/if}}">
     ▶️
   </a>
 </div>
@@ -228,6 +229,10 @@
     position: relative;
   }
 
+  .navItem:hover .subMenu {
+    display: block;
+  }
+
   .navLink {
     text-decoration: none;
     color: whitesmoke;
@@ -243,13 +248,7 @@
     background-color: slategrey;
     @include box-shadow($box-shadow-default);
     border-radius: 0.5rem;
-    padding: 1rem;
-  }
-
-  .navLink:hover,
-  .navLink:hover .subMenu {
-    display: block;
-    color: red;
+    width: max-content;
   }
 
   .subNavItem {
@@ -263,8 +262,9 @@
     display: block;
   }
 
-  .subNavLink:hover {
-    color: red;
+  .subNavItem:hover {
+    background: rgb(97, 111, 126);
+    border-radius: .5rem;
   }
 
   .itemDescripcion {
