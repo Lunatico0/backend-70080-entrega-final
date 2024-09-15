@@ -5,7 +5,9 @@ import cartRouter from "./routes/cart.routes.js";
 import viewsRouter from "./routes/views.routes.js";
 import ProductManager from './dao/db/productManagerDb.js'
 import { Server } from "socket.io";
+import { config } from 'dotenv'
 import "./db.js"
+config();
 
 const productManager = new ProductManager();
 
