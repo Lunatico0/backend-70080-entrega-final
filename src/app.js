@@ -16,7 +16,12 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 
-app.use(cors());
+app.use(cors({
+  origin: '*',  // Permitir todas las solicitudes de cualquier origen (solo para desarrollo)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.options('*', cors());
 app.engine('handlebars', engine({
   runtimeOptions: {                       //
     allowProtoPropertiesByDefault: true,  // Por si ".lean()" no funciona en productManagerDb.js
