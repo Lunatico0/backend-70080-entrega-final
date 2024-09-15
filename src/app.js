@@ -3,7 +3,8 @@ import { engine } from "express-handlebars";
 import productsRouter from "./routes/products.routes.js";
 import cartRouter from "./routes/cart.routes.js";
 import viewsRouter from "./routes/views.routes.js";
-import ProductManager from './dao/db/productManagerDb.js'
+import ProductManager from './dao/db/productManagerDb.js';
+import cors from 'cors';
 import { Server } from "socket.io";
 import { config } from 'dotenv'
 import "./db.js"
@@ -14,6 +15,8 @@ const productManager = new ProductManager();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+
+app.use(cors());
 app.engine('handlebars', engine({
   runtimeOptions: {                       //
     allowProtoPropertiesByDefault: true,  // Por si ".lean()" no funciona en productManagerDb.js
